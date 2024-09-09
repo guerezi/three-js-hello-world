@@ -1,0 +1,24 @@
+{
+  "name": "hello-world",
+  "version": "1.0.0",
+  "description": "A JavaScript project",
+  "main": "./index.js",
+  "scripts": {
+    "start": "node ./node_modules/parcel-bundler/bin/cli serve ./src/index.html --port 8080",
+    "build": "node ./node_modules/parcel-bundler/bin/cli build ./src/index.html --out-dir ./",
+    "lint": "node ./node_modules/eslint/bin/eslint . --ext .js --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.168.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.3"
+  }
+}
