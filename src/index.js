@@ -1,9 +1,11 @@
 import * as THREE from 'three';
+import { setUpBuildings } from './objects/building.js';
 import { setUpRoad } from './objects/road.js';
 import { setUpSunAndMoon, updateSunAndMoon } from './objects/sunAndMoon.js';
 import { controlTrafficLights, setupTrafficLights } from './objects/trafficLight.js';
 import { moveVehicles } from './objects/vehicle.js';
 import { camera } from './setup/camera.js';
+import { setupFog } from './setup/fog.js';
 import { setupLights } from './setup/lights.js';
 import { renderer } from './setup/renderer.js';
 import { scene } from './setup/scene.js';
@@ -14,21 +16,33 @@ setupControls(camera, renderer);
 setUpGUI();
 
 setUpRoad(scene);
+setUpBuildings(scene);
 setupLights(scene);
 setUpSunAndMoon(scene)
 setupTrafficLights(scene);
+setupFog(scene);
 
 let clock = new THREE.Clock();
 let isPaused = false;
 let animationSpeed = 1;
+let elapsedTime = 0;
+const lightChangeInterval = 3; // Intervalo de 3 segundos
 
 function animate() {
     requestAnimationFrame(animate);
 
     if (!isPaused) {
         const delta = clock.getDelta() * animationSpeed;
+        elapsedTime += delta; // Incrementa o tempo acumulado
+
         moveVehicles(delta);
         updateSunAndMoon(delta, scene);
+
+        // Controle das luzes baseado no tempo acumulado
+        if (elapsedTime >= lightChangeInterval) {
+            controlTrafficLights();
+            elapsedTime = 0; // Reinicia o tempo acumulado
+        }
     }
 
     renderer.render(scene, camera);
@@ -49,6 +63,3 @@ document.addEventListener('keydown', (event) => {
 });
 
 animate();
-
-// Controle do semáforo
-setInterval(controlTrafficLights, 3000);

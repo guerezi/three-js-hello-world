@@ -49,10 +49,10 @@ const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
 
 function setUpSunAndMoon(scene) {
     sun.castShadow = false;
-    sun.position.set(30, 50, 0);
+    sun.position.set(60, 100, 0);
     scene.add(sun);
 
-    moon.position.set(-30, 50, 0);
+    moon.position.set(-60, 100, 0);
     scene.add(moon);
 
     glowMesh.scale.set(1.1, 1.1, 1.1); // Slightly larger than the sun
@@ -68,18 +68,18 @@ function updateSunAndMoon(delta) {
     let angle = cycleProgress * Math.PI * 2; // Converte o progresso do ciclo para um ângulo em radianos
 
     // Atualiza a posição do Sol e da Lua ao longo de uma órbita suave
-    sun.position.x = Math.cos(angle) * 50;
-    sun.position.y = Math.sin(angle) * 50;
+    sun.position.x = Math.cos(angle) * 100;
+    sun.position.y = Math.sin(angle) * 100;
 
-    moon.position.x = -sun.position.x // Math.cos(angle + Math.PI) * 50; // Lua está sempre oposta ao Sol
-    moon.position.y = -sun.position.y // Math.sin(angle + Math.PI) * 50;
+    moon.position.x = -sun.position.x
+    moon.position.y = -sun.position.y
 
     glowMesh.position.copy(sun.position); // Posiciona o brilho do Sol no mesmo lugar que o Sol
 
     directionalLight.position.copy(sun.position); // Luz direcional segue o Sol
 
     // Transição suave entre dia e noite
-    let sunHeight = sun.position.y / 50; // Altura normalizada do Sol (entre -1 e 1)
+    let sunHeight = sun.position.y / 100; // Altura normalizada do Sol (entre -1 e 1)
     sunHeight = Math.max(0, Math.min(1, sunHeight)); // Limitando valores entre 0 e 1
 
     // Interpolação da intensidade da luz (transição suave)
