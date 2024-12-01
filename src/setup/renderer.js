@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;  // Usar sombras suaves
 renderer.shadowMap.needsUpdate = true;

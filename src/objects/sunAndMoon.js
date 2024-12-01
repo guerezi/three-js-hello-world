@@ -3,8 +3,8 @@ import { camera } from '../setup/camera';
 import { ambientLight, directionalLight } from '../setup/lights';
 import { renderer } from '../setup/renderer';
 
-const cycleTime = 100;  // Tempo total para cada ciclo (em segundos)
-let timeElapsed = 0; // Tempo decorrido desde o início do ciclo
+const cycleTime = 100;
+let timeElapsed = 0;
 
 const sunGeometry = new THREE.SphereGeometry(6, 32, 32);
 const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
@@ -55,7 +55,7 @@ function setUpSunAndMoon(scene) {
     moon.position.set(-60, 100, 0);
     scene.add(moon);
 
-    glowMesh.scale.set(1.1, 1.1, 1.1); // Slightly larger than the sun
+    glowMesh.scale.set(1.1, 1.1, 1.1);
     scene.add(glowMesh);
 }
 
@@ -63,41 +63,32 @@ function setUpSunAndMoon(scene) {
 function updateSunAndMoon(delta) {
     timeElapsed += delta;
 
-    // Normaliza o tempo entre 0 e 1, onde 0 é o nascer do sol e 1 o pôr do sol
     let cycleProgress = (timeElapsed % cycleTime) / cycleTime;
-    let angle = cycleProgress * Math.PI * 2; // Converte o progresso do ciclo para um ângulo em radianos
+    let angle = cycleProgress * Math.PI * 2;
 
-    // Atualiza a posição do Sol e da Lua ao longo de uma órbita suave
     sun.position.x = Math.cos(angle) * 100;
     sun.position.y = Math.sin(angle) * 100;
-
     moon.position.x = -sun.position.x
     moon.position.y = -sun.position.y
 
-    glowMesh.position.copy(sun.position); // Posiciona o brilho do Sol no mesmo lugar que o Sol
+    glowMesh.position.copy(sun.position);
+    directionalLight.position.copy(sun.position);
 
-    directionalLight.position.copy(sun.position); // Luz direcional segue o Sol
+    let sunHeight = sun.position.y / 100;
+    sunHeight = Math.max(0, Math.min(1, sunHeight));
 
-    // Transição suave entre dia e noite
-    let sunHeight = sun.position.y / 100; // Altura normalizada do Sol (entre -1 e 1)
-    sunHeight = Math.max(0, Math.min(1, sunHeight)); // Limitando valores entre 0 e 1
-
-    // Interpolação da intensidade da luz (transição suave)
     const dayIntensity = 1;
     const nightIntensity = 0.2;
-    directionalLight.intensity = THREE.MathUtils.lerp(nightIntensity, dayIntensity, sunHeight);
+    directionalLight.intensity = THREE.MathUtils.lerp(nightIntensity, dayIntensity, sunHeight) + 1;
     ambientLight.intensity = THREE.MathUtils.lerp(0.3, 0.7, sunHeight);
 
-    // Interpolação da cor do céu (transição suave)
-    const daySkyColor = new THREE.Color(0x87ceeb); // Céu azul durante o dia
-    const nightSkyColor = new THREE.Color(0x000022); // Céu escuro durante a noite
+    const daySkyColor = new THREE.Color(0x87ceeb);
+    const nightSkyColor = new THREE.Color(0x000022);
     const currentSkyColor = daySkyColor.clone().lerp(nightSkyColor, 1 - sunHeight);
 
-    // Aplicar a cor gradiente ao fundo da cena
     renderer.setClearColor(currentSkyColor);
 
-    // (Opcional) Você pode também ajustar a cor da luz direcional para imitar o pôr do sol
-    const sunsetColor = new THREE.Color(0xff4500); // Cor alaranjada do pôr do sol
+    const sunsetColor = new THREE.Color(0xff4500);
     directionalLight.color = sunsetColor.clone().lerp(new THREE.Color(0xffffff), sunHeight);
 }
 

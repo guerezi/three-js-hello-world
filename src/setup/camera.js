@@ -14,11 +14,7 @@ camera.bottom = -frustumSize / 2;
 camera.updateProjectionMatrix();
 
 window.addEventListener('resize', () => {
-    let aspect = window.innerWidth / window.innerHeight;
-    camera.left = -aspect * frustumSize / 2;
-    camera.right = aspect * frustumSize / 2;
-    camera.top = frustumSize / 2;
-    camera.bottom = -frustumSize / 2;
+    camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 });
 

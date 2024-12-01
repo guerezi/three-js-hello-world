@@ -3,40 +3,94 @@ import { scene } from '../setup/scene.js';
 import { crossing } from './road.js';
 import { trafficLights } from './trafficLight.js';
 
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+
 const vehicles = [];
 
-function createVehicle(direction) {
-    const color = Math.random() * 0xffffff;
-    // const vehicleGeometry = Math.random() < 0.33 ? createCar() : Math.random() > 0.5 ? createTruck() : createMotorcycle();
-    const vehicleGeometry = new THREE.BoxGeometry(4, 2, 2);
+const carLoader = new OBJLoader();
+const carMTLLoader = new MTLLoader();
 
-    const vehicleMesh = new THREE.Mesh(vehicleGeometry, new THREE.MeshStandardMaterial({
-        color: color,
-        // metalness: 0.5,
-        // roughness: 0,
-    }));
+// Function to load materials with a promise
+function loadMaterials(url) {
+    return new Promise((resolve, reject) => {
+        carMTLLoader.load(
+            url,
+            (materials) => {
+                materials.preload();
+                resolve(materials);
+            },
+            undefined,
+            (error) => reject(error)
+        );
+    });
+}
+
+// Function to load the object with a promise
+function loadObject(url, materials) {
+    return new Promise((resolve, reject) => {
+        if (materials) carLoader.setMaterials(materials);
+
+        carLoader.load(
+            url,
+            (object) => resolve(object),
+            undefined,
+            (error) => reject(error)
+        );
+    });
+}
+
+let debouncer = false;
+let timer;
+async function createVehicle(direction) {
+    if (debouncer) return;
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+        debouncer = false;
+    }, 1000)
+
+    debouncer = true;
+
+    if (vehicles.length > 10) return;
+
+    const materials = await loadMaterials('/Car-Model/Car.mtl');
+
+    materials.materials.Body.color.r = Math.random()
+    materials.materials.Body.color.g = Math.random()
+    materials.materials.Body.color.b = Math.random()
+
+    const object = await loadObject('/Car-Model/Car.obj', materials);
+
+    const vehicleMesh = object.clone();
 
     let position;
     if (direction === 'right') {
-        position = new THREE.Vector3(-40, 2, -5);
+        position = new THREE.Vector3(-40, 0.4, -5);
     } else if (direction === 'left') {
-        position = new THREE.Vector3(40, 2, 5);
+        position = new THREE.Vector3(40, 0.4, 5);
     } else if (direction === 'up') {
-        position = new THREE.Vector3(5, 2, -40);
+        position = new THREE.Vector3(5, 0.4, -40);
     } else {
-        position = new THREE.Vector3(-5, 2, 40);
+        position = new THREE.Vector3(-5, 0.4, 40);
     }
 
     // rotates the vehicle to face the right direction
     switch (direction) {
-        case 'up':
-        case 'down':
+        case 'right':
             vehicleMesh.rotation.y = Math.PI / 2;
+            break;
+        case 'left':
+            vehicleMesh.rotation.y = -Math.PI / 2;
+            break;
+        case 'down':
+            vehicleMesh.rotation.y = Math.PI;
             break;
         default:
             break;
     }
 
+    vehicleMesh.scale.set(2.5, 2.5, 2.5);
+    vehicleMesh.color = 0x000000;
     vehicleMesh.position.copy(position);
     vehicleMesh.castShadow = true;
     vehicleMesh.receiveShadow = true;  // Opcional: permite que o veículo também receba sombras
@@ -53,25 +107,24 @@ function removeVehicle() {
     }
 }
 
-
+// TODO biblioteca colision box three
 function moveVehicles(delta) {
     vehicles.forEach(vehicle => {
         const speed = vehicle.speed * vehicle.speedFactor * delta;
 
-        // Reset speed to default
         vehicle.speed = 10;
 
-        // Distance to the crossing
         const distanceToCrossing = vehicle.mesh.position.distanceTo(crossing.position);
-
-        // Find the traffic light corresponding to the vehicle's direction
         const trafficLight = trafficLights.find(light => light.direction === vehicle.direction);
+        const isApproachingCrossing = distanceToCrossing < 25 && !isInCrossingZone(vehicle) && isCrossingAhead(vehicle);
 
-        // Check if the vehicle is approaching the crossing
-        const isApproachingCrossing = distanceToCrossing < 15 && !isInCrossingZone(vehicle) && isCrossingAhead(vehicle);
 
         if (isApproachingCrossing && trafficLight.redLight.visible) {
-            vehicle.speed = 0; // Stop the vehicle if the light is red and it is approaching
+            vehicle.speed = 0;
+            console.log(isApproachingCrossing)
+            console.log((vehicle))
+            console.log(isCrossingAhead(vehicle))
+            console.log('-----------------')
         }
 
         // Move the vehicle based on its direction
@@ -94,16 +147,15 @@ function moveVehicles(delta) {
                 break;
         }
 
-        // Collision avoidance with the car in front
         vehicles.forEach(otherVehicle => {
             if (otherVehicle !== vehicle && otherVehicle.direction === vehicle.direction) {
                 const distance = vehicle.mesh.position.distanceTo(otherVehicle.mesh.position);
                 const isAhead = isVehicleAhead(vehicle, otherVehicle);
 
                 if (isAhead) {
-                    if (distance < (8 / vehicle.speedFactor)) {
+                    if (distance < (30 / vehicle.speedFactor)) {
                         vehicle.speed = 0; // Stop the vehicle if too close
-                    } else if (distance < 10) {
+                    } else if (distance < 30) {
                         vehicle.speed = 8; // Slow down if moderately close
                     }
                 }
@@ -118,13 +170,13 @@ function moveVehicles(delta) {
 }
 
 // Helper function to check if a vehicle is inside the crossing
-function isInCrossingZone(vehicle) {
+function isInCrossingZone(vehicle) { //TODO,. FIX HERE
     const pos = vehicle.mesh.position;
     const crossingBounds = {
-        xMin: crossing.position.x - 12,
-        xMax: crossing.position.x + 12,
-        zMin: crossing.position.z - 12,
-        zMax: crossing.position.z + 12,
+        xMin: crossing.position.x - 10,
+        xMax: crossing.position.x + 10,
+        zMin: crossing.position.z - 10,
+        zMax: crossing.position.z + 10,
     };
 
     return (

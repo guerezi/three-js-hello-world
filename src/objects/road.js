@@ -1,45 +1,53 @@
 import * as THREE from 'three';
 
 const crossingGeometry = new THREE.PlaneGeometry(20, 20);
-const crossing = new THREE.Mesh(crossingGeometry, new THREE.MeshStandardMaterial({ color: 0x666666 }));
+const crossingMaterial = new THREE.MeshStandardMaterial();
+const crossing = new THREE.Mesh(crossingGeometry, crossingMaterial);
 
 function setUpRoad(scene) {
+    const roadGeometry = new THREE.PlaneGeometry(100, 100, 20, 20);
+    const roadTextureLoader = new THREE.TextureLoader();
 
-    // const textureLoader = new THREE.TextureLoader();
-    // const roadTexture = textureLoader.load('path/to/your/road_texture.jpg');  // Replace with the path to your texture
-    // const roadNormalMap = textureLoader.load('path/to/your/road_normal_map.jpg'); // Replace with your normal map path
+    const roadBaseColor = roadTextureLoader.load('/Asphalt_005_SD/Asphalt_005_COLOR.jpg');
+    const roadAmbientOcclusion = roadTextureLoader.load('/Asphalt_005_SD/Asphalt_005_OCC.jpg');
+    const roadNormalMap = roadTextureLoader.load('/Asphalt_005_SD/Asphalt_005_NORM.jpg');
+    const roadRoughnessMap = roadTextureLoader.load('/Asphalt_005_SD/Asphalt_005_ROUGH.jpg');
+    const roadHeightMap = roadTextureLoader.load('/Asphalt_005_SD/Asphalt_005_DISP.png');
 
-    // // https://www.sketchuptextureclub.com/textures/architecture/roads/roads
-
-    // // Optionally, set the texture to repeat
-    // roadTexture.wrapS = THREE.RepeatWrapping;
-    // roadTexture.wrapT = THREE.RepeatWrapping;
-    // roadTexture.repeat.set(10, 10);  // Adjust repetition based on road size
-
-    // // Normal map repetition settings
-    // roadNormalMap.wrapS = THREE.RepeatWrapping;
-    // roadNormalMap.wrapT = THREE.RepeatWrapping;
-    // roadNormalMap.repeat.set(10, 10);  // Same repeat as the diffuse map for consistency
-
-
-    const roadGeometry = new THREE.PlaneGeometry(100, 100);
     const roadMaterial = new THREE.MeshStandardMaterial({
-        color: 0x666666,
+        map: roadBaseColor,
+        aoMap: roadAmbientOcclusion,
+        normalMap: roadNormalMap,
+        roughnessMap: roadRoughnessMap,
+        displacementMap: roadHeightMap,
+        displacementScale: 0.3,
         side: THREE.DoubleSide,
         metalness: 0,
         roughness: 1,
     });
+
+    roadGeometry.setAttribute('uv2', roadGeometry.attributes.uv);
     const road = new THREE.Mesh(roadGeometry, roadMaterial);
+
+    roadBaseColor.wrapS = roadBaseColor.wrapT = THREE.RepeatWrapping;
+    roadAmbientOcclusion.wrapS = roadAmbientOcclusion.wrapT = THREE.RepeatWrapping;
+    roadNormalMap.wrapS = roadNormalMap.wrapT = THREE.RepeatWrapping;
+    roadRoughnessMap.wrapS = roadRoughnessMap.wrapT = THREE.RepeatWrapping;
+    roadHeightMap.wrapS = roadHeightMap.wrapT = THREE.RepeatWrapping;
+
+    roadBaseColor.repeat.set(24, 24);
+    roadAmbientOcclusion.repeat.set(24, 24);
+    roadNormalMap.repeat.set(24, 24);
+    roadRoughnessMap.repeat.set(24, 24);
+    roadHeightMap.repeat.set(24, 24);
 
     road.receiveShadow = true;
     road.rotation.x = -Math.PI / 2;
-    road.position.y = 0;
-    scene.add(road);
 
-    crossing.receiveShadow = true;
     crossing.rotation.x = -Math.PI / 2;
-    crossing.position.y = 0.1;
-    scene.add(crossing);
+    crossing.position.y = -0.01;
+
+    scene.add(road, crossing);
 }
 
 export { crossing, setUpRoad };

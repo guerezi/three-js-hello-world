@@ -1,0 +1,16 @@
+newmtl blinn1SG
+illum 4
+Kd 0.7 0.7 0.7  # Lighter gray
+Ka 0.2 0.2 0.2  # Low ambient reflectivity
+Tf 1.00 1.00 1.00
+map_Kd ConcreteBench.jpg
+Ni 1.00
+Ks 0.5 0.5 0.5  # Specular reflectivity
+newmtl lambert2SG
+illum 4
+Kd 0.7 0.7 0.7  # Lighter gray
+Ka 0.2 0.2 0.2  # Low ambient reflectivity
+Tf 1.00 1.00 1.00
+map_Kd ConcreteBench.jpg
+Ni 1.00
+Ks 0.5 0.5 0.5  # Specular reflectivity
