@@ -11,7 +11,6 @@ const vehicles = [];
 const carLoader = new OBJLoader();
 const carMTLLoader = new MTLLoader();
 
-// Function to load materials with a promise
 function loadMaterials(url) {
     return new Promise((resolve, reject) => {
         carMTLLoader.load(
@@ -26,7 +25,6 @@ function loadMaterials(url) {
     });
 }
 
-// Function to load the object with a promise
 function loadObject(url, materials) {
     return new Promise((resolve, reject) => {
         if (materials) carLoader.setMaterials(materials);
@@ -91,7 +89,7 @@ async function createVehicle(direction) {
     vehicleMesh.scale.set(2.5, 2.5, 2.5);
     vehicleMesh.position.copy(position);
     vehicleMesh.castShadow = true;
-    vehicleMesh.receiveShadow = true;  // Opcional: permite que o veículo também receba sombras
+    vehicleMesh.receiveShadow = true;
 
     vehicles.push({ mesh: vehicleMesh, direction, speed: 10, id: vehicles.length, speedFactor: 1 + Math.random() });
 
@@ -119,11 +117,11 @@ function moveVehicles(delta) {
             vehicle.speed = 0;
         }
 
-        const time = Date.now() * 0.005; // Using time for oscillation
-        const shakeAmplitude = 0.001; // Amplitude of the shake
+        const time = Date.now() * 0.005;
+        const shakeAmplitude = 0.001;
         vehicle.mesh.position.z += Math.sin(time) * shakeAmplitude;
 
-        // Move the vehicle based on its direction
+
         switch (vehicle.direction) {
             case 'right':
                 vehicle.mesh.position.x += speed;
@@ -151,15 +149,14 @@ function moveVehicles(delta) {
 
                 if (isAhead) {
                     if (distance < (30 / vehicle.speedFactor)) {
-                        vehicle.speed = 0; // Stop the vehicle if too close
+                        vehicle.speed = 0;
                     } else if (distance < 30) {
-                        vehicle.speed = 8; // Slow down if moderately close
+                        vehicle.speed = 8;
                     }
                 }
 
                 if (isInCrossingZone(vehicle) && !isAhead) {
-                    console.log('-----------------')
-                    vehicle.speed = 8; // Stop the vehicle if too close to the crossing
+                    vehicle.speed = 8;
                 }
             }
         });
@@ -167,8 +164,7 @@ function moveVehicles(delta) {
     });
 }
 
-// Helper function to check if a vehicle is inside the crossing
-function isInCrossingZone(vehicle) { //TODO,. FIX HERE
+function isInCrossingZone(vehicle) {
     const pos = vehicle.mesh.position;
     const crossingBounds = {
         xMin: crossing.position.x - 10,
@@ -185,7 +181,6 @@ function isInCrossingZone(vehicle) { //TODO,. FIX HERE
     );
 }
 
-// Helper function to check if a vehicle is ahead
 function isVehicleAhead(vehicle, other) {
     switch (vehicle.direction) {
         case 'right':

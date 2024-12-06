@@ -59,7 +59,6 @@ function setUpSunAndMoon(scene) {
     scene.add(glowMesh);
 }
 
-
 function updateSunAndMoon(delta) {
     timeElapsed += delta;
 

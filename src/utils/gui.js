@@ -2,7 +2,6 @@ import * as dat from 'dat.gui';
 import { createVehicle, removeVehicle } from '../objects/vehicle';
 
 function setUpGUI() {
-    // Configuração do dat.GUI
     const gui = new dat.GUI();
     const settings = {
         createVehicle: () => createVehicle('right'),

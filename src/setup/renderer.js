@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;  // Usar sombras suaves
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.shadowMap.needsUpdate = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
 

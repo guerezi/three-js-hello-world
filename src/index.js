@@ -26,22 +26,21 @@ let clock = new THREE.Clock();
 let isPaused = false;
 let animationSpeed = 1;
 let elapsedTime = 0;
-const lightChangeInterval = 3; // Intervalo de 3 segundos
+const lightChangeInterval = 3;
 
 function animate() {
     requestAnimationFrame(animate);
 
     if (!isPaused) {
         const delta = clock.getDelta() * animationSpeed;
-        elapsedTime += delta; // Incrementa o tempo acumulado
+        elapsedTime += delta;
 
         moveVehicles(delta);
         updateSunAndMoon(delta, scene);
 
-        // Controle das luzes baseado no tempo acumulado
         if (elapsedTime >= lightChangeInterval) {
             controlTrafficLights();
-            elapsedTime = 0; // Reinicia o tempo acumulado
+            elapsedTime = 0;
         }
     }
 
@@ -50,15 +49,14 @@ function animate() {
 
 document.addEventListener('keydown', (event) => {
     if (event.code === 'Space') {
-        isPaused = !isPaused;  // Alterna o estado de pausa
-        // Quando sair da pausa, reinicia o clock para não acumular tempo
+        isPaused = !isPaused;
         if (!isPaused) {
-            clock.getDelta();  // Reseta o delta para evitar saltos após a pausa
+            clock.getDelta();
         }
     } else if (event.code === 'ArrowUp') {
-        animationSpeed = Math.min(10, animationSpeed + 0.1);
+        animationSpeed = Math.min(10, animationSpeed + 0.5);
     } else if (event.code === 'ArrowDown') {
-        animationSpeed = Math.max(0.1, animationSpeed - 0.1);  // Diminui a velocidade da animação
+        animationSpeed = Math.max(0.1, animationSpeed - 0.5);
     }
 });
 
