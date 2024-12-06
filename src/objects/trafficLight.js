@@ -58,39 +58,17 @@ class TrafficLight {
 
 
         if (direction === 'up') {
-            this.staff.rotation.x = -Math.PI / 2;
-            this.staff.position.z -= 4.7;
-
-            this.redLightPoint.position.z -= 3.75;
-            this.redLight.rotation.x = -Math.PI / 2;
-            this.redLight.position.z -= 3.75;
-
-            this.greenLightPoint.position.z -= 3.75;
-            this.greenLight.rotation.x = -Math.PI / 2;
-            this.greenLight.position.z -= 5.75;
-        } else if (direction === 'down') {
-            this.staff.rotation.x = Math.PI / 2;
-            this.staff.position.z += 4.7;
-
-            this.redLightPoint.position.z += 3.75;
-            this.redLight.rotation.x = Math.PI / 2;
-            this.redLight.position.z += 3.75;
-
-            this.greenLightPoint.position.z += 3.75;
-            this.greenLight.rotation.x = Math.PI / 2;
-            this.greenLight.position.z += 5.75;
-        } else if (direction === 'left') {
             this.staff.rotation.z = Math.PI / 2;
             this.staff.position.x -= 4.7;
 
             this.redLightPoint.position.x -= 3.75;
-            this.redLight.rotation.z = Math.PI / 2;
+            this.redLight.rotation.z = -Math.PI / 2;
             this.redLight.position.x -= 3.75;
 
             this.greenLightPoint.position.x -= 3.75;
             this.greenLight.rotation.z = Math.PI / 2;
             this.greenLight.position.x -= 5.75;
-        } else if (direction === 'right') {
+        } else if (direction === 'down') {
             this.staff.rotation.z = Math.PI / 2;
             this.staff.position.x += 4.7;
 
@@ -101,6 +79,30 @@ class TrafficLight {
             this.greenLightPoint.position.x += 3.75;
             this.greenLight.rotation.z = Math.PI / 2;
             this.greenLight.position.x += 5.75;
+        } else if (direction === 'left') {
+            this.staff.rotation.y = Math.PI / 2;
+            this.staff.rotation.z = Math.PI / 2;
+            this.staff.position.z += 4.7;
+
+            this.redLightPoint.position.z += 3.75;
+            this.redLight.rotation.x = Math.PI / 2;
+            this.redLight.position.z += 3.75;
+
+            this.greenLightPoint.position.z += 3.75;
+            this.greenLight.rotation.x = Math.PI / 2;
+            this.greenLight.position.z += 5.75;
+        } else if (direction === 'right') {
+            this.staff.rotation.y = Math.PI / 2;
+            this.staff.rotation.z = Math.PI / 2;
+            this.staff.position.z -= 4.7;
+
+            this.redLightPoint.position.z -= 3.75;
+            this.redLight.rotation.x = Math.PI / 2;
+            this.redLight.position.z -= 3.75;
+
+            this.greenLightPoint.position.z -= 3.75;
+            this.greenLight.rotation.x = Math.PI / 2;
+            this.greenLight.position.z -= 5.75;
         }
 
         // Initial state
@@ -118,10 +120,10 @@ class TrafficLight {
 let trafficLights = [];
 
 function setupTrafficLights(scene) {
-    trafficLights.push(new TrafficLight(scene, { x: -12, y: 1, z: 12 }, 'up')); // West
-    trafficLights.push(new TrafficLight(scene, { x: 12, y: 1, z: -12 }, 'down')); // East
-    trafficLights.push(new TrafficLight(scene, { x: 12, y: 1, z: 12 }, 'left')); // North
-    trafficLights.push(new TrafficLight(scene, { x: -12, y: 1, z: -12 }, 'right')); // South
+    trafficLights.push(new TrafficLight(scene, { x: 12, y: 1, z: 12 }, 'up')); // West
+    trafficLights.push(new TrafficLight(scene, { x: -12, y: 1, z: -12 }, 'down')); // East
+    trafficLights.push(new TrafficLight(scene, { x: 12, y: 1, z: -12 }, 'left')); // North
+    trafficLights.push(new TrafficLight(scene, { x: -12, y: 1, z: 12 }, 'right')); // South
 }
 
 let lightIteration = 0;

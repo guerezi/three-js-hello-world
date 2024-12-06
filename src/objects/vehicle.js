@@ -65,16 +65,15 @@ async function createVehicle(direction) {
 
     let position;
     if (direction === 'right') {
-        position = new THREE.Vector3(-40, 0.4, -5);
+        position = new THREE.Vector3(-40, 0.4, 5);
     } else if (direction === 'left') {
-        position = new THREE.Vector3(40, 0.4, 5);
+        position = new THREE.Vector3(40, 0.4, -5);
     } else if (direction === 'up') {
-        position = new THREE.Vector3(5, 0.4, -40);
+        position = new THREE.Vector3(-5, 0.4, -40);
     } else {
-        position = new THREE.Vector3(-5, 0.4, 40);
+        position = new THREE.Vector3(5, 0.4, 40);
     }
 
-    // rotates the vehicle to face the right direction
     switch (direction) {
         case 'right':
             vehicleMesh.rotation.y = Math.PI / 2;
@@ -90,7 +89,6 @@ async function createVehicle(direction) {
     }
 
     vehicleMesh.scale.set(2.5, 2.5, 2.5);
-    vehicleMesh.color = 0x000000;
     vehicleMesh.position.copy(position);
     vehicleMesh.castShadow = true;
     vehicleMesh.receiveShadow = true;  // Opcional: permite que o veículo também receba sombras
@@ -107,30 +105,29 @@ function removeVehicle() {
     }
 }
 
-// TODO biblioteca colision box three
 function moveVehicles(delta) {
     vehicles.forEach(vehicle => {
         const speed = vehicle.speed * vehicle.speedFactor * delta;
 
-        vehicle.speed = 10;
+        vehicle.speed = 20;
 
         const distanceToCrossing = vehicle.mesh.position.distanceTo(crossing.position);
         const trafficLight = trafficLights.find(light => light.direction === vehicle.direction);
         const isApproachingCrossing = distanceToCrossing < 25 && !isInCrossingZone(vehicle) && isCrossingAhead(vehicle);
 
-
         if (isApproachingCrossing && trafficLight.redLight.visible) {
             vehicle.speed = 0;
-            console.log(isApproachingCrossing)
-            console.log((vehicle))
-            console.log(isCrossingAhead(vehicle))
-            console.log('-----------------')
         }
+
+        const time = Date.now() * 0.005; // Using time for oscillation
+        const shakeAmplitude = 0.001; // Amplitude of the shake
+        vehicle.mesh.position.z += Math.sin(time) * shakeAmplitude;
 
         // Move the vehicle based on its direction
         switch (vehicle.direction) {
             case 'right':
                 vehicle.mesh.position.x += speed;
+                console.log(vehicle.mesh)
                 if (vehicle.mesh.position.x > 40) vehicle.mesh.position.x = -40;
                 break;
             case 'left':
@@ -161,6 +158,7 @@ function moveVehicles(delta) {
                 }
 
                 if (isInCrossingZone(vehicle) && !isAhead) {
+                    console.log('-----------------')
                     vehicle.speed = 8; // Stop the vehicle if too close to the crossing
                 }
             }

@@ -33,7 +33,6 @@ function loadObject(loader, url, materials) {
 
 async function setUpBuildings(scene) {
     // Sidewalk
-
     const sidewalk1Geometry = new THREE.BoxGeometry(40, 1, 40);
     const sidewalk1TextureLoader = new THREE.TextureLoader();
 
@@ -74,7 +73,6 @@ async function setUpBuildings(scene) {
     sidewalk1.receiveShadow = true;
     sidewalk1.position.set(-30, 0.5, -30);
 
-
     const sidewalk2 = sidewalk1.clone();
     sidewalk2.position.set(30, 0.5, -30);
 
@@ -85,8 +83,6 @@ async function setUpBuildings(scene) {
     sidewalk4.position.set(-30, 0.5, 30);
 
     scene.add(sidewalk1, sidewalk2, sidewalk3, sidewalk4);
-
-
 
     // LOT 1 and 2 - Buildings
     let buildingNYMaterials = await loadMaterials(new MTLLoader(), '/buildings/13940_New_York_City_Brownstone_Building_v1_l2.mtl');

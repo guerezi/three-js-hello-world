@@ -51,4 +51,3 @@ function setUpRoad(scene) {
 }
 
 export { crossing, setUpRoad };
-
